@@ -7,7 +7,7 @@ function StoredCard() {
 
   return (
     <div className='max-w-3xl bg-slate-400 mx-auto p-5'> 
-      {ctx.toDoList.map((item) => (
+      {ctx.filteredList.map((item) => (
         <Card key={item.id} who={item.who} job={item.job} when={item.when} daysToComplete={item.daysToComplete} />
       ))}
     </div>

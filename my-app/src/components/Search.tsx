@@ -6,7 +6,7 @@ function Search() {
   const [selectedOption, setSelectedOption] = useState<string>();
 
   const [filteredToDoList, setFilteredToDoList] = useState<ToDo[]>([]);
- 
+
   const ctx = useContext(ContextToDo);
   const whoOrJob = useRef<HTMLInputElement>(null);
   const daysToComplete = useRef<HTMLInputElement>(null);
@@ -17,14 +17,17 @@ function Search() {
     setSelectedOption(value);
   };
 
- 
-
   console.log(whoOrJob.current?.value);
   const searchHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-     ctx.selectChange(selectedOption!, whoOrJob.current!.value);
+
+    if (selectedOption === "who" || selectedOption === "job") {
+      ctx.selectChange(selectedOption, whoOrJob.current!.value);
+    } else if (selectedOption === "daysToComplete") {
+      // Handle searching by daysToComplete
     }
-  
+  };
+
   return (
     <div className="text-center">
       <select
@@ -34,8 +37,6 @@ function Search() {
         <option value="Select">Select</option>
         <option value="who">Who Add</option>
         <option value="job">What we are doing</option>
-
-        <option value="daysToComplete">How many days to complete</option>
       </select>
       <div>
         {selectedOption === "who" || selectedOption === "job" ? (

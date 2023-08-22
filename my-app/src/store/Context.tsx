@@ -13,7 +13,8 @@ type ContextTypeObj = {
   addTodo: (todo: ToDo) => void;
   resetTodo: () => void;
   removeTodo: (todoId: number) => void;
-  selectChange?: (selectedOption: string, input: string) => void;
+  selectChange: (selectedOption: string, input: string) => void;
+  filteredList: ToDo[];
 };
 
 export const ContextToDo = React.createContext<ContextTypeObj>({
@@ -21,22 +22,26 @@ export const ContextToDo = React.createContext<ContextTypeObj>({
   addTodo: (todo: ToDo) => {},
   resetTodo: () => {},
   removeTodo: (todoId: number) => {},
-  selectChange: (selectedOption?: string, input?: string) => {},
+  selectChange: (selectedOption: string, input: string) => {},
+  filteredList: [],
 });
 
 const myItems = JSON.parse(localStorage.getItem("storedInfos") || "[]");
 
 const ContextProvider: React.FC<PropsWithChildren<{}>> = (props) => {
   const [storedInfos, setStoredInfos] = useState<ToDo[]>(myItems);
-  const [filteredToDoList, setFilteredToDoList] = useState<ToDo[]>([]);
+  const [filteredToDoList, setFilteredToDoList] = useState<ToDo[]>(storedInfos);
 
   const addTodoHandler = (object: ToDo) => {
     setStoredInfos((prev) => {
       return [...prev, object];
     });
+    setFilteredToDoList((prev) => {
+      return [...prev, object];
+    });
   };
-
-  const searchHandler = (selectedOption: string, input: string) => {
+console.log(filteredToDoList)
+  const searchHandler = (selectedOption: string, input?: string) => {
     if (input === undefined) return;
 
     if (selectedOption === "who") {
@@ -44,10 +49,16 @@ const ContextProvider: React.FC<PropsWithChildren<{}>> = (props) => {
         data.who.includes(input)
       );
       setFilteredToDoList(filteredData);
-      console.log(filteredData);
+     
+    }
+    if (selectedOption === "job") {
+      const filteredData = storedInfos.filter((data) =>
+        data.job.includes(input)
+      );
+      setFilteredToDoList(filteredData);
     }
   };
-
+  
   localStorage.setItem("storedInfos", JSON.stringify(storedInfos));
 
   const contextValues: ContextTypeObj = {
@@ -56,6 +67,7 @@ const ContextProvider: React.FC<PropsWithChildren<{}>> = (props) => {
     resetTodo: () => {},
     removeTodo: (todoId: number) => {},
     selectChange: searchHandler,
+    filteredList: filteredToDoList,
   };
 
   return (
